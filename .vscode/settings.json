@@ -1,5 +1,7 @@
 {
-    "_comment": "Committed and shared. Machine-specific settings do NOT belong here: workspace settings override user settings, so anything added here is imposed on everyone.",
+    // Committed and shared. Machine-specific settings do NOT belong here:
+    // workspace settings override user settings, so anything added here is
+    // imposed on everyone.
 
     "files.eol": "\n",
     "files.trimTrailingWhitespace": true,
