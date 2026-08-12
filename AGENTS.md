@@ -16,9 +16,9 @@
 
 # hed-task-models
 
-Experimental development of graph models for tasks, part of the HED (Hierarchical Event Descriptors) family of repositories. **This repo stores the models; it holds no code.** The code that produces and consumes these models lives in the `hed-vis` project.
+Experimental development of graph models for tasks, part of the HED (Hierarchical Event Descriptors) family of repositories: directed-graph descriptions of the task structure of neuroscience and behavioral experiments, extracted from the events of BIDS datasets. **This repo stores the models; it holds no code.** The code that produces and consumes these models lives in the `hed-vis` project.
 
-**The repository is being populated.** The standard structure landed before the content, so this file currently states the conventions that incoming content must follow rather than describing it. Whoever moves content in updates this file in the same change: the real purpose paragraph, the Layout section, and a description of what a model file is and which `hed-vis` tools read and write it. A section below that says "none yet" is a placeholder, not a fact to preserve.
+This repository is the canonical home of two things: `model_rules.md`, the numbered specification of what a model is and how one is built, and `json_examples/`, worked examples - currently one, the Sternberg working memory task. No other repository carries a current copy of either.
 
 ## Commands
 
@@ -26,8 +26,21 @@ Test framework: none. There is no code here to test; the code and its tests live
 
 ## Layout
 
+- `model_rules.md` - the specification: numbered rules for what a model is, how node columns are chosen, phases, trial boundaries, provenance, and reports. The authoritative statement of the format; start here.
+- `json_examples/` - worked examples, one directory per task.
+  - `sternberg/` - modified Sternberg working memory task, built from the BIDS EEG dataset `eeg_ds004117s_hed_sternberg` (OpenNeuro ds004117) in `hed-examples`.
+    - `data/` - reference copies for the reader: the dataset README, the events sidecar, one sample run of events, and `dataset_source.json`, which records where the full source dataset lives. Models are built from the full dataset, never from this directory.
+    - `models/event_type_task_role/` - the current model: the model JSON, its keymap TSV, and `reports/` (`model_summary.md`, `log.md`).
+    - `models/draft/` - an early draft model that predates `model_rules.md` and does not conform to it; kept for comparison, never a format example to follow.
 - `.status/` - working notes. **Gitignored; local to each machine.**
-- Nothing else yet.
+
+## What a model file is
+
+A model is a JSON file describing one experiment's task structure as a directed graph, derived from the `_events.tsv` files of a BIDS dataset. Each unique combination of values in the model's chosen `columns` becomes a node; a row mapping to node `Ni` immediately followed by a row mapping to `Nj` becomes an edge carrying a count. Beyond nodes and edges, a model declares its phases and their order, its trial boundaries, the rows it excluded and why, and full provenance: which files and rows it was built from and which columns were ignored. The normative definition is `model_rules.md`; a model that does not satisfy it is wrong, not a variant.
+
+`dataset_source.json` in an example's `data/` directory is the one machine-dependent point in the pipeline: it lists candidate dataset roots, tried in order, resolved relative to that file. The committed file carries relative roots only; a machine whose checkout layout differs records its absolute dataset root in `.status/local-environment.md` and adds it to the local copy of the roots list without committing it.
+
+No generator code exists yet, here or anywhere. When it is written it will live in `hed-vis`, not here; this repository stores only the spec, the models, and the reference data needed to check them.
 
 ## Conventions that differ from defaults
 
@@ -44,6 +57,7 @@ Test framework: none. There is no code here to test; the code and its tests live
 Referred to by name, never by path.
 
 - `hed-vis` - the code this repository relies on: the tools that build, read, and visualize the models stored here. A change to a model file's format is a change to what `hed-vis` must read - say so explicitly rather than assuming it is safe. No code is vendored here from it or from anywhere else.
+- `hed-examples` - the curated BIDS example datasets the models are built from. Datasets are never copied here; each model records provenance against its source dataset, and `dataset_source.json` says where that dataset lives.
 
 ## Where the thinking lives
 
